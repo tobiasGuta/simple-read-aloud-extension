@@ -41,6 +41,11 @@ A lightweight, privacy-focused Microsoft Edge extension that reads text aloud us
 1.  Enable "Auto-read on select" in the popup.
 2.  Simply highlight text on any page, and it will start reading immediately after you release the mouse.
 
+### Screenshot
+
+<img width="330" height="309" alt="image" src="https://github.com/user-attachments/assets/1843e15a-d065-4457-8ca3-9c9e86dbab99" />
+
+
 ## Debugging
 
 *   Open the Developer Tools (F12) and look at the **Console** tab to see logs like "Read Aloud: Started reading" or "Read Aloud: Finished reading".
