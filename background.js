@@ -83,7 +83,48 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
+// Auto-pause logic
+function checkAutoPause(newActiveTabId) {
+  if (activeTabId === null || allChunks.length === 0) return;
+  
+  chrome.storage.local.get(['autoPause'], (result) => {
+    const autoPause = result.autoPause !== undefined ? result.autoPause : true;
+    if (!autoPause) return;
 
+    if (newActiveTabId !== activeTabId) {
+      chrome.tts.pause();
+    } else {
+      chrome.tts.resume();
+    }
+  });
+}
+
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  checkAutoPause(activeInfo.tabId);
+});
+
+chrome.windows.onFocusChanged.addListener((windowId) => {
+  if (activeTabId === null || allChunks.length === 0) return;
+  
+  chrome.storage.local.get(['autoPause'], (result) => {
+    const autoPause = result.autoPause !== undefined ? result.autoPause : true;
+    if (!autoPause) return;
+
+    if (windowId === chrome.windows.WINDOW_ID_NONE) {
+      chrome.tts.pause();
+    } else {
+      chrome.tabs.query({ active: true, windowId: windowId }, (tabs) => {
+        if (tabs[0]) {
+          if (tabs[0].id === activeTabId) {
+            chrome.tts.resume();
+          } else {
+            chrome.tts.pause();
+          }
+        }
+      });
+    }
+  });
+});
 
 // Handle keyboard shortcuts
 chrome.commands.onCommand.addListener((command, tab) => {

@@ -4,10 +4,48 @@
 
   let highlightElements = [];
   let overlayElement = null;
+  let currentHighlightElement = null;
   let chunksData = []; 
   let activeNodesMap = null;
 
+  function updateOverlayHole() {
+    if (!overlayElement || !currentHighlightElement) return;
+    
+    // Use a Range to get the tight bounding box of the actual text, ignoring block width
+    const range = document.createRange();
+    range.selectNodeContents(currentHighlightElement);
+    const rect = range.getBoundingClientRect();
+    
+    const padding = 6;
+    const l = rect.left - padding;
+    const t = rect.top - padding;
+    const w = rect.width + padding * 2;
+    const h = rect.height + padding * 2;
+    
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <filter id="feather">
+          <feGaussianBlur stdDeviation="4"/>
+        </filter>
+        <mask id="hole">
+          <rect width="100%" height="100%" fill="white"/>
+          <rect x="${l}" y="${t}" width="${w}" height="${h}" rx="12" fill="black" filter="url(#feather)"/>
+        </mask>
+      </defs>
+      <rect width="100%" height="100%" fill="white" mask="url(#hole)"/>
+    </svg>`;
+    
+    const dataUrl = `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}")`;
+    overlayElement.style.maskImage = dataUrl;
+    overlayElement.style.webkitMaskImage = dataUrl;
+    overlayElement.style.clipPath = 'none';
+  }
+
   function clearHighlights() {
+    window.removeEventListener('scroll', updateOverlayHole);
+    window.removeEventListener('resize', updateOverlayHole);
+    currentHighlightElement = null;
+
     if (overlayElement) {
       overlayElement.remove();
       overlayElement = null;
@@ -28,6 +66,7 @@
     if (index >= 0 && index < highlightElements.length) {
       const el = highlightElements[index];
       if (el) {
+          currentHighlightElement = el;
           el.classList.add('read-aloud-highlight');
           
           overlayElement = document.createElement('div');
@@ -36,6 +75,10 @@
           document.body.classList.add('reading-active');
 
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          updateOverlayHole();
+
+          window.addEventListener('scroll', updateOverlayHole, { passive: true });
+          window.addEventListener('resize', updateOverlayHole, { passive: true });
       }
       if (chunksData[index]) {
           activeNodesMap = chunksData[index].nodesMap;

@@ -4,10 +4,11 @@ A premium, highly-polished Chrome extension that transforms any webpage into an 
 
 ## Features
 
-- **Immersive Focus Mode**: When reading starts, the page background dims with a sleek blur effect, and the active paragraph is highlighted so you can focus entirely on the content.
+- **Immersive Focus Mode**: When reading starts, the page background dims with a sleek blur effect, keeping the active paragraph clearly visible so you can focus entirely on the content.
 - **Word-Level Highlighting**: The exact word currently being spoken is highlighted in vibrant orange in real-time, making it incredibly easy to follow along.
 - **Auto-Read on Select**: Simply highlight any text on the page, and the extension will automatically begin reading it to you.
 - **Premium Settings Popup**: A beautifully designed, glassmorphic dark-mode settings menu to configure your reading experience.
+- **Auto-Pause on Tab Switch**: By default, the extension intelligently pauses reading if you switch to another tab or minimize the window, and automatically resumes when you return to the article. You can toggle this off in the settings if you prefer background listening.
 - **Test Voice**: Instantly preview your voice, speed, and volume settings directly from the popup menu without needing to read a full page.
 - **Keyboard Navigation**: Skip around the article or control playback using built-in keyboard shortcuts.
 

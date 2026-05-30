@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const rateValue = document.getElementById('rate-value');
   const volumeValue = document.getElementById('volume-value');
   const autoReadCheck = document.getElementById('auto-read-check');
+  const autoPauseCheck = document.getElementById('auto-pause-check');
   
   const btnTest = document.getElementById('btn-test');
   const btnRead = document.getElementById('btn-read');
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         voiceSelect.appendChild(option);
       });
 
-      chrome.storage.local.get(['voiceName', 'rate', 'volume', 'autoRead'], (result) => {
+      chrome.storage.local.get(['voiceName', 'rate', 'volume', 'autoRead', 'autoPause'], (result) => {
         if (result.voiceName) {
           const voiceExists = voices.some(v => v.voiceName === result.voiceName);
           if (voiceExists) {
@@ -63,6 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (result.autoRead) {
           autoReadCheck.checked = result.autoRead;
         }
+        if (result.autoPause !== undefined) {
+          autoPauseCheck.checked = result.autoPause;
+        } else {
+          autoPauseCheck.checked = true; // Default to true
+        }
         updateDisplays();
       });
     });
@@ -75,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
       voiceName: voiceSelect.value,
       rate: rateRange.value,
       volume: volumeRange.value,
-      autoRead: autoReadCheck.checked
+      autoRead: autoReadCheck.checked,
+      autoPause: autoPauseCheck.checked
     });
   }
 
@@ -83,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   rateRange.addEventListener('change', saveSettings);
   volumeRange.addEventListener('change', saveSettings);
   autoReadCheck.addEventListener('change', saveSettings);
+  autoPauseCheck.addEventListener('change', saveSettings);
 
   btnTest.addEventListener('click', () => {
     // Send a message to background.js to test voice

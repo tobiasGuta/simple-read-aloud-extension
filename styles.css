@@ -15,10 +15,7 @@
 .read-aloud-highlight {
   position: relative !important;
   z-index: 2147483647 !important;
-  background-color: rgba(255, 255, 0, 0.3) !important;
-  box-shadow: 0 0 10px rgba(255, 255, 0, 0.5) !important;
   border-radius: 4px !important;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
 ::highlight(read-aloud-word) {
