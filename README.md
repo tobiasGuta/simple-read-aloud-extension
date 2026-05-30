@@ -1,51 +1,44 @@
-# Simple Read Aloud Extension (Dracula Theme)
+# Simple Read Aloud Extension
 
-A lightweight, privacy-focused Microsoft Edge extension that reads text aloud using the Web Speech API. It features a beautiful Dracula-themed UI, customizable voice settings, and productivity features like auto-read on selection.
+A premium, highly-polished Chrome extension that transforms any webpage into an immersive audiobook experience using your browser's high-quality native text-to-speech engine.
 
 ## Features
 
-*   **Text-to-Speech**: Reads selected text or the entire page if nothing is selected.
-*   **Customizable Settings**:
-    *   **Voice Selection**: Choose from all available browser voices (prioritizes "Natural" voices).
-    *   **Speed Control**: Adjust reading speed from 0.5x to 2.0x.
-    *   **Volume Control**: Adjust the reading volume.
-*   **Auto-Read on Select**: Optional feature to automatically read text as soon as you highlight it.
-*   **Context Menu**: Right-click any selected text and choose "Read Aloud Selection".
-*   **Dracula Theme**: A dark, eye-friendly interface using the popular Dracula color palette.
-*   **Privacy Focused**: Runs entirely client-side. No text is sent to external servers.
+- **Immersive Focus Mode**: When reading starts, the page background dims with a sleek blur effect, and the active paragraph is highlighted so you can focus entirely on the content.
+- **Word-Level Highlighting**: The exact word currently being spoken is highlighted in vibrant orange in real-time, making it incredibly easy to follow along.
+- **Auto-Read on Select**: Simply highlight any text on the page, and the extension will automatically begin reading it to you.
+- **Premium Settings Popup**: A beautifully designed, glassmorphic dark-mode settings menu to configure your reading experience.
+- **Test Voice**: Instantly preview your voice, speed, and volume settings directly from the popup menu without needing to read a full page.
+- **Keyboard Navigation**: Skip around the article or control playback using built-in keyboard shortcuts.
 
-## How to Load the Extension in Microsoft Edge
+## Keyboard Shortcuts
 
-1.  Open Microsoft Edge.
-2.  Navigate to `edge://extensions`.
-3.  Turn on the **"Developer mode"** toggle switch in the bottom left of the sidebar (or top right depending on your version).
-4.  Click the **"Load unpacked"** button that appears at the top.
-5.  Select the `read-aloud-extension` folder.
-6.  The extension should now appear in your list of extensions and in the toolbar.
+- **Start Reading**: `Ctrl+Shift+L` (Mac: `Command+Shift+L`) - Reads the entire page or your current text selection.
+- **Stop Reading**: `Ctrl+Shift+S` (Mac: `Command+Shift+S`)
+- **Skip Forward**: `Ctrl+Shift+Right` (Mac: `Command+Shift+Right`) - Skip to the next paragraph.
+- **Skip Backward**: `Ctrl+Shift+Left` (Mac: `Command+Shift+Left`) - Skip to the previous paragraph.
 
-## How to Use
+*Note: You can customize these shortcuts at any time by navigating to `chrome://extensions/shortcuts` in your browser.*
 
-### Using the Popup
-1.  Click the **Read Aloud** icon in the browser toolbar.
-2.  Adjust your **Voice**, **Speed**, and **Volume** settings. These are saved automatically.
-3.  Click **Read Page** to start reading (reads selection or full page).
-4.  Click **Stop** to end playback.
-5.  Toggle **"Auto-read on select"** to enable/disable automatic reading when highlighting text.
+## Installation
 
-### Using the Context Menu
-1.  Highlight text on any webpage.
-2.  Right-click the selection.
-3.  Choose **"Read Aloud Selection"**.
+Since this extension is loaded locally for development:
 
-### Using Auto-Read
-1.  Enable "Auto-read on select" in the popup.
-2.  Simply highlight text on any page, and it will start reading immediately after you release the mouse.
+1. Open Google Chrome and navigate to `chrome://extensions/`.
+2. Enable **Developer mode** using the toggle switch in the top right corner.
+3. Click the **Load unpacked** button in the top left.
+4. Select the `simple-read-aloud-extension` folder.
+5. The extension is now installed! Pin it to your toolbar for easy access to the settings menu.
 
-### Screenshot
+## Usage
 
-<img width="330" height="309" alt="image" src="https://github.com/user-attachments/assets/1843e15a-d065-4457-8ca3-9c9e86dbab99" />
+1. **Read a whole page**: Click the extension icon to open the popup and click "Read Page", or press `Ctrl+Shift+L`.
+2. **Read specific text**: Highlight any text on the page. If "Auto-read on select" is enabled in your settings, it will start immediately. Otherwise, right-click the text and choose "Read Aloud Selection".
+3. **Change Settings**: Click the extension icon to open the premium popup. Here you can change the voice, adjust reading speed, change the volume, and test your configuration.
 
+## Architecture & Permissions
 
-## Debugging
-
-*   Open the Developer Tools (F12) and look at the **Console** tab to see logs like "Read Aloud: Started reading" or "Read Aloud: Finished reading".
+- **`manifest.json`**: Manifest V3 compliant.
+- **`tts`**: Required to access the high-quality Chrome Web Speech API voices.
+- **`activeTab` & `scripting`**: Required to inject the highlighting and text-extraction scripts into the page you want to read.
+- **`storage`**: Used to save your voice and speed preferences locally.

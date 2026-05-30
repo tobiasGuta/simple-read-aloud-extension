@@ -5,72 +5,71 @@ document.addEventListener('DOMContentLoaded', () => {
   const rateValue = document.getElementById('rate-value');
   const volumeValue = document.getElementById('volume-value');
   const autoReadCheck = document.getElementById('auto-read-check');
+  
+  const btnTest = document.getElementById('btn-test');
   const btnRead = document.getElementById('btn-read');
   const btnStop = document.getElementById('btn-stop');
 
-  // Update value displays
-  rateRange.addEventListener('input', () => rateValue.textContent = rateRange.value);
-  volumeRange.addEventListener('input', () => volumeValue.textContent = volumeRange.value);
+  function updateDisplays() {
+    rateValue.textContent = Number(rateRange.value).toFixed(1) + 'x';
+    volumeValue.textContent = Math.round(Number(volumeRange.value) * 100) + '%';
+  }
+
+  rateRange.addEventListener('input', updateDisplays);
+  volumeRange.addEventListener('input', updateDisplays);
 
   // Load Voices
   function loadVoices() {
-    const voices = speechSynthesis.getVoices();
-    voiceSelect.innerHTML = '';
-    
-    // Sort voices to put "Natural" ones at the top
-    voices.sort((a, b) => {
-      const aNat = a.name.includes('Natural');
-      const bNat = b.name.includes('Natural');
-      if (aNat && !bNat) return -1;
-      if (!aNat && bNat) return 1;
-      return a.name.localeCompare(b.name);
-    });
-
-    voices.forEach(voice => {
-      const option = document.createElement('option');
-      option.value = voice.name;
-      option.textContent = `${voice.name} (${voice.lang})`;
-      voiceSelect.appendChild(option);
-    });
-
-    // Load saved settings after voices are populated
-    chrome.storage.local.get(['voiceName', 'rate', 'volume', 'autoRead'], (result) => {
-      if (result.voiceName) {
-        // Check if the saved voice actually exists in the current list
-        const voiceExists = voices.some(v => v.name === result.voiceName);
-        if (voiceExists) {
-          voiceSelect.value = result.voiceName;
-        }
-      }
+    chrome.tts.getVoices((voices) => {
+      voiceSelect.innerHTML = '';
       
-      // If no saved voice or saved voice not found, try to select a default Natural voice
-      if (!voiceSelect.value) {
-          const defaultVoice = voices.find(v => v.name.includes('Natural') && v.lang.startsWith('en')) || voices[0];
-          if (defaultVoice) {
-              voiceSelect.value = defaultVoice.name;
-          }
-      }
+      voices.sort((a, b) => {
+        const aNat = a.voiceName && a.voiceName.includes('Natural');
+        const bNat = b.voiceName && b.voiceName.includes('Natural');
+        if (aNat && !bNat) return -1;
+        if (!aNat && bNat) return 1;
+        return (a.voiceName || '').localeCompare(b.voiceName || '');
+      });
 
-      if (result.rate) {
-        rateRange.value = result.rate;
-        rateValue.textContent = result.rate;
-      }
-      if (result.volume) {
-        volumeRange.value = result.volume;
-        volumeValue.textContent = result.volume;
-      }
-      if (result.autoRead) {
-        autoReadCheck.checked = result.autoRead;
-      }
+      voices.forEach(voice => {
+        if (!voice.voiceName) return;
+        const option = document.createElement('option');
+        option.value = voice.voiceName;
+        option.textContent = `${voice.voiceName} (${voice.lang || 'unknown'})`;
+        voiceSelect.appendChild(option);
+      });
+
+      chrome.storage.local.get(['voiceName', 'rate', 'volume', 'autoRead'], (result) => {
+        if (result.voiceName) {
+          const voiceExists = voices.some(v => v.voiceName === result.voiceName);
+          if (voiceExists) {
+            voiceSelect.value = result.voiceName;
+          }
+        }
+        
+        if (!voiceSelect.value && voices.length > 0) {
+            const defaultVoice = voices.find(v => v.voiceName && v.voiceName.includes('Natural') && v.lang && v.lang.startsWith('en')) || voices[0];
+            if (defaultVoice) {
+                voiceSelect.value = defaultVoice.voiceName;
+            }
+        }
+
+        if (result.rate) {
+          rateRange.value = result.rate;
+        }
+        if (result.volume) {
+          volumeRange.value = result.volume;
+        }
+        if (result.autoRead) {
+          autoReadCheck.checked = result.autoRead;
+        }
+        updateDisplays();
+      });
     });
   }
 
   loadVoices();
-  if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = loadVoices;
-  }
 
-  // Save settings when changed
   function saveSettings() {
     chrome.storage.local.set({
       voiceName: voiceSelect.value,
@@ -85,47 +84,24 @@ document.addEventListener('DOMContentLoaded', () => {
   volumeRange.addEventListener('change', saveSettings);
   autoReadCheck.addEventListener('change', saveSettings);
 
-  // Helper to inject script and send message
-  async function sendMessageToContentScript(message) {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-    if (!tab) return;
-
-    // Skip restricted pages
-    if (tab.url.startsWith("chrome://") || tab.url.startsWith("edge://") || tab.url.startsWith("about:")) {
-        console.warn("Cannot run on this page.");
-        return;
-    }
-
-    try {
-      // Try sending a message first
-      await chrome.tabs.sendMessage(tab.id, message);
-    } catch (error) {
-      // If it fails, the script might not be there. Inject it.
-      console.log("Script not found, injecting...");
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: ['content.js']
-      });
-      
-      // Retry sending the message
-      setTimeout(() => {
-          chrome.tabs.sendMessage(tab.id, message);
-      }, 100);
-    }
-  }
+  btnTest.addEventListener('click', () => {
+    // Send a message to background.js to test voice
+    chrome.runtime.sendMessage({ 
+        command: 'test-voice',
+        settings: {
+            voiceName: voiceSelect.value,
+            rate: rateRange.value,
+            volume: volumeRange.value
+        }
+    });
+  });
 
   btnRead.addEventListener('click', () => {
-    const settings = {
-      voiceName: voiceSelect.value,
-      rate: parseFloat(rateRange.value),
-      volume: parseFloat(volumeRange.value)
-    };
-    sendMessageToContentScript({ command: 'play', settings });
-    window.close(); // Close popup to let user read
+    chrome.runtime.sendMessage({ command: 'request-read-active-tab' });
+    window.close();
   });
 
   btnStop.addEventListener('click', () => {
-    sendMessageToContentScript({ command: 'stop' });
+    chrome.runtime.sendMessage({ command: 'stop' });
   });
 });
