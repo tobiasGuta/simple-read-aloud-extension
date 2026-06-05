@@ -2,6 +2,10 @@
 
 A premium, highly-polished Chrome extension that transforms any webpage into an immersive audiobook experience using your browser's high-quality native text-to-speech engine.
 
+<a href="https://microsoftedge.microsoft.com/addons/detail/simple-read-aloud/ijelaopmfpogileojpipkplglijoibni" target="_self">
+  <img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" alt="Get it from Microsoft" />
+</a>
+
 ## Features
 
 - **Immersive Focus Mode**: When reading starts, the page background dims with a sleek blur effect, keeping the active paragraph clearly visible so you can focus entirely on the content.
@@ -44,4 +48,7 @@ Since this extension is loaded locally for development:
 - **`tts`**: Required to access the high-quality Chrome Web Speech API voices.
 - **`activeTab` & `scripting`**: Required to inject the highlighting and text-extraction scripts into the page you want to read.
 - **`storage`**: Used to save your voice and speed preferences locally.
+
+
+
 
