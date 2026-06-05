@@ -11,6 +11,7 @@ A premium, highly-polished Chrome extension that transforms any webpage into an 
 - **Auto-Pause on Tab Switch**: By default, the extension intelligently pauses reading if you switch to another tab or minimize the window, and automatically resumes when you return to the article. You can toggle this off in the settings if you prefer background listening.
 - **Test Voice**: Instantly preview your voice, speed, and volume settings directly from the popup menu without needing to read a full page.
 - **Keyboard Navigation**: Skip around the article or control playback using built-in keyboard shortcuts.
+- **Code Block Reading**: Includes readable code snippets and pre blocks instead of skipping over them.
 
 ## Keyboard Shortcuts
 
@@ -43,3 +44,4 @@ Since this extension is loaded locally for development:
 - **`tts`**: Required to access the high-quality Chrome Web Speech API voices.
 - **`activeTab` & `scripting`**: Required to inject the highlighting and text-extraction scripts into the page you want to read.
 - **`storage`**: Used to save your voice and speed preferences locally.
+

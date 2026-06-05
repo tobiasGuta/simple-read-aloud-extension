@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Simple Read Aloud",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Reads selected text or the entire page aloud using the Web Speech API.",
   "permissions": [
     "activeTab",

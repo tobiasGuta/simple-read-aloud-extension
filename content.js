@@ -7,6 +7,8 @@
   let currentHighlightElement = null;
   let chunksData = []; 
   let activeNodesMap = null;
+  const READABLE_BLOCK_SELECTOR = 'p, h1, h2, h3, h4, h5, h6, li, blockquote, pre';
+  const SELECTION_BLOCK_SELECTOR = `${READABLE_BLOCK_SELECTOR}, div`;
 
   function updateOverlayHole() {
     if (!overlayElement || !currentHighlightElement) return;
@@ -151,7 +153,7 @@
   function extractParagraphs() {
     highlightElements = [];
     chunksData = [];
-    const textElements = Array.from(document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote'));
+    const textElements = Array.from(document.querySelectorAll(READABLE_BLOCK_SELECTOR));
     const filtered = [];
     for (const el of textElements) {
       if (el.innerText.trim().length > 0 && el.offsetParent !== null) {
@@ -184,7 +186,7 @@
       container = container.parentElement;
     }
 
-    const blockEl = container.closest('p, h1, h2, h3, h4, h5, h6, li, blockquote, div') || container;
+    const blockEl = container.closest(SELECTION_BLOCK_SELECTOR) || container;
     
     highlightElements = [blockEl];
     
